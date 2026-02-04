@@ -33,18 +33,14 @@ public class OAuthAttributes {
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
-                .googleSubId((String) attributes.get("sub")) // 구글의 고유 식별자
+                .googleSubId((String) attributes.get("sub"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
 
-    // UserService에 전달하기 위해 DTO로 변환
     public UserRequestDto toUserRequestDto() {
         UserRequestDto dto = new UserRequestDto();
-        // UserRequestDto에 필드를 채우는 로직 (Setter가 없다면 생성자나 Builder 활용)
-        // 기존 UserRequestDto 구조에 맞춰 작성하세요.
         return dto;
-        // 참고: 아까 만드신 UserRequestDto에 @AllArgsConstructor나 Builder를 추가하면 편합니다.
     }
 }

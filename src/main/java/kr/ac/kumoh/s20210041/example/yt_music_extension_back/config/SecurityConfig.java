@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s20210041.example.yt_music_extension_back.config;
 
+import kr.ac.kumoh.s20210041.example.yt_music_extension_back.config.jwt.HttpCookieOAuth2AuthorizationRequestRepository;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.config.jwt.JwtAuthenticationFilter;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.config.jwt.OAuth2SuccessHandler;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.config.jwt.TokenProvider;
@@ -23,31 +24,58 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(tokenProvider);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
 
-                // [수정 포인트] 세션 정책 변경
-                // OAuth2 로그인 진행 시 세션이 아예 없으면 인증 요청을 유지할 수 없습니다.
-                // STATELESS 대신 IF_REQUIRED를 사용하여 로그인 시점에만 세션을 허용합니다.
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login/**", "/api/v1/auth/**", "/oauth2/**").permitAll() // /oauth2/** 추가
+                        .requestMatchers(
+                                "/",
+                                "/error",
+                                "/favicon.ico",
+                                "/api/v1/auth/**",
+                                "/oauth2/**",
+                                "/login/**",
+                                "/default-ui.css"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
 
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization")
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                        )
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/login/oauth2/code/*")
+                        )
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)
+                        )
                         .successHandler(oAuth2SuccessHandler)
                 )
 
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthenticationFilter(),
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

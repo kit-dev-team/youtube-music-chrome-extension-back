@@ -1,5 +1,6 @@
 package kr.ac.kumoh.s20210041.example.yt_music_extension_back.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UserRequestDto;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.entity.User;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final UserService userService;
 
     @GetMapping("/google")
@@ -20,7 +22,7 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public RedirectView loginSuccess() {
+    public RedirectView loginSuccess(@RequestParam String token) {
         return new RedirectView("https://music.youtube.com");
     }
 
