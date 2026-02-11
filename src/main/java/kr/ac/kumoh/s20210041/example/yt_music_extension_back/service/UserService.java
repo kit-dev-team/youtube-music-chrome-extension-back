@@ -1,7 +1,7 @@
 package kr.ac.kumoh.s20210041.example.yt_music_extension_back.service;
 
 import jakarta.transaction.Transactional;
-import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UserRequestDto;
+import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UpsertUserRequest;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.entity.User;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,15 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User saveOrUpdate(UserRequestDto requestDto) {
+    public User saveOrUpdate(UpsertUserRequest requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .map(entity -> entity.update(requestDto.getName(), requestDto.getPicture()))
-                .orElse(requestDto.toEntity());
+                .orElseGet(() -> User.builder()
+                        .email(requestDto.getEmail())
+                        .name(requestDto.getName())
+                        .picture(requestDto.getPicture())
+                        .googleSubId(requestDto.getGoogleSubId())
+                        .build());
 
         return userRepository.save(user);
     }

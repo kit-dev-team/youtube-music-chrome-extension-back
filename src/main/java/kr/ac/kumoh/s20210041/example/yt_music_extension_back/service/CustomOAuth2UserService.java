@@ -1,7 +1,7 @@
 package kr.ac.kumoh.s20210041.example.yt_music_extension_back.service;
 
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.OAuthAttributes;
-import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UserRequestDto;
+import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UpsertUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -32,7 +32,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        UserRequestDto userDto = new UserRequestDto(
+        UpsertUserRequest userDto = new UpsertUserRequest(
                 attributes.getEmail(),
                 attributes.getName(),
                 attributes.getPicture(),

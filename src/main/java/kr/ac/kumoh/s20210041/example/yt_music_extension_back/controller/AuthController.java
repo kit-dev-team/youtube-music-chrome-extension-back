@@ -1,7 +1,6 @@
 package kr.ac.kumoh.s20210041.example.yt_music_extension_back.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UserRequestDto;
+import kr.ac.kumoh.s20210041.example.yt_music_extension_back.dto.UpsertUserRequest;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.entity.User;
 import kr.ac.kumoh.s20210041.example.yt_music_extension_back.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/test-login")
-    public ResponseEntity<User> testLogin(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<User> testLogin(@RequestBody UpsertUserRequest requestDto) {
         User savedUser = userService.saveOrUpdate(requestDto);
         return ResponseEntity.ok(savedUser);
     }

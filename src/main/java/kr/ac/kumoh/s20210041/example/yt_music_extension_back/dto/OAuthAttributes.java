@@ -39,8 +39,8 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public UserRequestDto toUserRequestDto() {
-        UserRequestDto dto = new UserRequestDto();
+    public UpsertUserRequest toUserRequestDto() {
+        UpsertUserRequest dto = new UpsertUserRequest();
         return dto;
     }
 }
